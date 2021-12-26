@@ -343,7 +343,7 @@ export default {
       this.$axios.delete("/sys/user/delete-batch", {
           data: {
             deleteUserBatch: deleteUsers 
-          },
+          }
         }).then((res) => {
           this.$message({
             showClose: true,
@@ -383,11 +383,6 @@ export default {
             this.$refs.roleTree.setCheckedKeys(roles.map((item) => item.id))
         });
         this.roleForm.userId = id;
-      // this.$refs.roleTree.setCheckedKeys(roles.map(item => item.id));
-      // this.$axios.get("/sys/user/info/" + id).then(res => {
-      //     this.$refs.roleTree.setCheckedKeys(res.data.data.roleIds);
-      //     this.roleForm = res.data.data
-      // })
     },
     submitRoleFormHandle(formName) {
         var userId = this.roleForm.userId;

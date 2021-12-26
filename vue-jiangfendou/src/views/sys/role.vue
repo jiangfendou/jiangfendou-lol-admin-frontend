@@ -2,7 +2,10 @@
     <div>
         <el-form :inline="true">
             <el-form-item>
-                <el-input v-model="searchForm.name" placeholder="名称" clearable></el-input>
+                <el-input v-model="searchForm.name" placeholder="请输入名称" clearable></el-input>
+            </el-form-item>
+            <el-form-item>
+                <el-input v-model="searchForm.code" placeholder="请输入唯一编码" clearable></el-input>
             </el-form-item>
             <el-form-item>
                 <el-button @click="getRoleList">搜索</el-button>
@@ -12,13 +15,14 @@
             </el-form-item>
             <el-form-item>
                  <el-popconfirm
-                    title="确定要批量删除吗？" @confirm="delHandle(null)"
+                    title="确定要批量删除吗？" @confirm="delSomeHandle()"
                 >
                     <el-button type="danger" slot="reference" :disabled="searchForm.delBtStatus">批量删除</el-button>
                 </el-popconfirm>
             </el-form-item>
         </el-form>
         <el-table
+            v-loading="loading"
             ref="multipleTable"
             :data="tableData"
             border
@@ -64,13 +68,13 @@
             prop=""
             label="操作">
                 <template slot-scope="scope">
-                    <el-button type="text" @click="permHandle(scope.row.id)">分配权限</el-button>
+                    <el-button type="text" @click="permHandle(scope.row.menuIds, scope.row.id)">分配权限</el-button>
                     <el-divider direction="vertical"></el-divider>
                     <el-button type="text" @click="editHandle(scope.row.id)">编辑</el-button>
                     <el-divider direction="vertical"></el-divider>
                     <template>
                         <el-popconfirm
-                        title="这是一段内容确定删除吗？" @confirm="delHandle(scope.row.id)"
+                        title="这是一段内容确定删除吗？" @confirm="delHandle(scope.row.id, scope.row.lockVersion)"
                         >
                             <el-button type="text" slot="reference" >删除</el-button>
                             </el-popconfirm>
@@ -144,6 +148,7 @@
 </template>
 
 <script>
+    import Element from "element-ui"
     export default {
         name: "role",
         data() {
@@ -152,15 +157,18 @@
                 size: 10,
                 current: 1,
                 dialogVisible: false,
+                loading: true,
                 editFrom: {
                     name: '',
                     code: '',
                     remark: '',
-                    status: 1
+                    status: 1,
+                    lockVersion: ''
                 },
                 searchForm: {
                     delBtStatus: true,
-                    
+                    name: '',
+                    code: ''
                 },
                 editFromRules: {
                     name: [
@@ -178,7 +186,7 @@
 
                 permDialogVisible: false,
                 permForm: {
-
+                    roleId: ''
                 },
                 defaultProps: {
                     children: 'children',
@@ -190,8 +198,6 @@
         created() {
             this.getRoleList()
             this.$axios.get("/sys/menu/list").then(res => {
-                console.log("menus");
-                console.log(res.data.data);
                 this.permTreeData =res.data.data
             })
         },
@@ -204,12 +210,12 @@
                             this.$message({
                                 showClose: true,
                                 message: '恭喜你，操作成功！',
-                                type: 'success',
-                                onclose:() => {
-                                    this.getRoleList()
-                                }
+                                type: 'success'
                             });
+                            this.getRoleList()
                             this.resetForm('editFrom')
+                        }).catch((error) => {
+                            Element.Message.error(error.response.data.apiError.message)
                         }); 
                     } else {
                         console.log('error submit!!');
@@ -218,7 +224,7 @@
                 });
             },
             editHandle(id) {
-                this.$axios.get('/sys/role/info/' + id).then(res => {
+                this.$axios.get('/sys/role/detail?roleId=' +  id).then(res => {
                     this.editFrom = res.data.data
                     this.dialogVisible = true
                 })
@@ -234,7 +240,7 @@
             },
             handleSelectionChange(val) {
                 this.multipleSelection = val;
-                this.searchForm.delBtStatus = val === 0
+                this.searchForm.delBtStatus = val.length == 0 ? true : false;
             },
             handleSizeChange(val) {
                 console.log(`每页 ${val} 条`);
@@ -255,32 +261,54 @@
             handleClose() {
                 this.resetForm('editFrom')
             },
-            // 删除
-            delHandle(id) {
-
-                var ids = []
-                if (id) {
-                    ids.push(id) 
-                } else {
-                    this.multipleSelection.forEach(row => {
-                        ids.push(row.id)
-                    })
-                }
-                this.$axios.post("/sys/role/delete/" + ids).then(res => {
+            // 批量删除
+            delSomeHandle() {
+                var deleteRoles = []
+                this.multipleSelection.forEach(row => {
+                    var role = {
+                        roleId: row.id,
+                        lockVersion: row.lockVersion
+                    }
+                    deleteRoles.push(role);
+                })
+                this.$axios.delete("/sys/role/delete-batch/", {
+                    data: {
+                        deleteRoleBatch: deleteRoles 
+                    }
+                }).then(res => {
                     this.$message({
                         showClose: true,
                         message: '恭喜你，操作成功！',
-                        type: 'success',
-                        onclose:() => {
-                            this.getMenuTree()
-                        }
+                        type: 'success'
                     });
-                })
+                     this.getRoleList()
+                }).catch((error) => {
+                    Element.Message.error(error.response.data.apiError.message)
+                }); 
+            },
+            // 删除
+            delHandle(id, lockVersion) {
+                this.$axios.delete("/sys/role/delete/", {
+                    data: {
+                        id: id,
+                        lockVersion: lockVersion
+                    }
+                }).then(res => {
+                    this.$message({
+                        showClose: true,
+                        message: '恭喜你，操作成功！',
+                        type: 'success'
+                    });
+                    this.getRoleList()
+                }).catch((error) => {
+                    Element.Message.error(error.response.data.apiError.message)
+                }); 
             },
             getRoleList() {
                  this.$axios.get("/sys/role/list", {
                      params: {
                          name: this.searchForm.name,
+                         code: this.searchForm.code,
                          current: this.current,
                          size: this.size
                      }
@@ -289,32 +317,41 @@
                     this.size = res.data.data.size
                     this.current = res.data.data.current
                     this.total = res.data.data.total
+                    this.loading = false;
                 })   
             },
 
-            permHandle(id) {
+            permHandle(menuIds, id) {
                 this.permDialogVisible = true
-                this.$axios.get("/sys/role/info/" + id).then(res => {
-                    console.log(res.data.data.menuIds);
-                    this.$refs.permTree.setCheckedKeys(res.data.data.menuIds);
-                    this.permForm = res.data.data
-                })
+                // this.$axios.get("/sys/role/info/" + id).then(res => {
+                //     console.log(res.data.data.menuIds);
+                //     this.$refs.permTree.setCheckedKeys(res.data.data.menuIds);
+                //     this.permForm = res.data.data
+                // })
+                console.log("menuIds.map((item) => item.id)");
+                console.log(menuIds.map((item) => item.id));
+                this.$nextTick(() => {
+                    this.$refs.permTree.setCheckedKeys(menuIds.map((item) => item.id))
+                });
+                this.permForm.roleId = id;
             },
             submitPermFormHandle(formName) {
                 var menuIds = this.$refs.permTree.getCheckedKeys()
                 console.log(menuIds);
-                this.$axios.post('/sys/role/perm', this.permForm.id, menuIds).then(res => {
+                this.$axios.put('/sys/role/update-role-menu', {
+                    menuIds: menuIds,
+                    roleId: this.permForm.roleId
+                }).then(res => {
                      this.$message({
                         showClose: true,
                         message: '恭喜你，操作成功！',
-                        type: 'success',
-                        onclose:() => {
-                            this.getMenuTree()
-                        }
+                        type: 'success'
                     });
+                    this.getRoleList()
                     this.permDialogVisible = false
-                })
-                
+                }).catch((error) => {
+                    Element.Message.error(error.response.data.apiError.message)
+                }); 
             }
         }
     }

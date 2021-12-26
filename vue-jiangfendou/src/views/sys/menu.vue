@@ -6,6 +6,7 @@
             </el-form-item>
         </el-form>
         <el-table
+            v-loading="loading"
             :data="tableData"
             style="width: 100%;margin-bottom: 20px;"
             row-key="id"
@@ -141,6 +142,7 @@
         data() {
             return {
                 dialogVisible: false,
+                loading: true,
                 editFrom: {
                     id: '',
                     name: '',
@@ -219,6 +221,7 @@
                 this.$axios.get("/sys/menu/list").then(res => {
                     console.log(res.data);
                     this.tableData = res.data.data
+                    this.loading = false;
                 })
             },
             delHandle(id, lockVersion) {

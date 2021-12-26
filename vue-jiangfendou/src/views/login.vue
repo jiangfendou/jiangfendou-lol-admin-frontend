@@ -70,6 +70,7 @@
                             this.$store.commit('USER_ID', res.data.data.userId);
                             this.$router.push("/index");
                         }).catch((error) => {
+                            this.getCaptchaImg()
                             Element.Message.error(error.response.data.apiError.message)
                         });
                     } else {
