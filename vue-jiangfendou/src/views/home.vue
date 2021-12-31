@@ -14,7 +14,8 @@
                         </span>
                         <el-dropdown-menu slot="dropdown">
                             <el-dropdown-item>
-                                <router-link to="/userCenter" style="color: #606266; text-decoration: none;">个人中心</router-link>
+                                <router-link to="/userCenter" style="color: #606266; text-decoration: none;"
+                                 @click.native="selectMenu({name: 'userCenter', title: '个人中心'})">个人中心</router-link>
                             </el-dropdown-item>
                             <el-dropdown-item @click.native="logout">退出</el-dropdown-item>
                         </el-dropdown-menu>
@@ -68,6 +69,10 @@
                     this.$store.commit ("resetState")
                     this.$router.push("/login")
                 })
+            },
+            selectMenu(item) {
+                console.log("iiiiiiiiii");
+                this.$store.commit("addTab", item);
             }
         }
     }

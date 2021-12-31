@@ -40,6 +40,12 @@ const router = new VueRouter({
 
 router.beforeEach((to, from, next) => {
 
+    if (!localStorage.getItem("userId")) {
+        if (to.path !== '/login') {
+            return next('/login')
+        }
+    }
+
     let hasRoute = store.state.menus.hasRoutes
     if (!hasRoute) {
         let userId = localStorage.getItem("userId");

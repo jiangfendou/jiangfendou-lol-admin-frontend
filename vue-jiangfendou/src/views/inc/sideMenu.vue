@@ -41,8 +41,6 @@
         computed: {
             menuList: {
                 get() {
-                    console.log("this.$store.state.menus.menuList");
-                    console.log(this.$store.state.menus.menuList);
                     return this.$store.state.menus.menuList
                 }
             }

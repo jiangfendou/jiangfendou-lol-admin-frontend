@@ -25,6 +25,7 @@
 </template>
 
 <script>
+    import Element from "element-ui"
     export default {
         name: "userCenter",
         data() {
@@ -44,7 +45,9 @@
                 passForm: {
                     currentPass: '',
                     password: '',
-                    checkPass: ''
+                    checkPass: '',
+                    id: '',
+                    lockVersion: ''
                 },
                 rules: {
                     currentPass: [
@@ -54,7 +57,7 @@
                         { required: true, validator: validataPass , trigger: 'blur' }
                     ],
                     password: [
-                        { type: 'date', required: true, message: '请输入新密码', trigger: 'blur' }
+                        { required: true, message: '请输入新密码', trigger: 'blur' }
                     ]
                 }
             };
@@ -64,22 +67,26 @@
         },
         methods: {
             getUserInfo() {
-                this.$axios.get("/sys/userInfo").then(res => {
+                let userId = localStorage.getItem("userId");
+                this.$axios.get("/sys/user/userInfo?userId=" + userId).then(res => {
                     this.userInfo = res.data.data; 
+                    this.passForm.id = userId;
+                    this.passForm.lockVersion = res.data.data.lockVersion;
                 })
             },
             submitForm(formName) {
                 this.$refs[formName].validate((valid) => {
                 if (valid) {
-                   const _this = this
-                   this.$axios.post("/sys/user/updatePass", this.passForm).then(res => {
-                       _this.$alert(res.data.msg, '提示', {
-                           confirmButtonText: '确定',
-                           callback: action => {
-                               this.$refs[formName].resetFields();
-                           }
-                       })
-                   })
+                    this.$axios.put("/sys/user/update-password", this.passForm).then(res => {
+                        this.$message({
+                            showClose: true,
+                            message: "恭喜你，修改密码成功！",
+                            type: "success"
+                        })
+                        this.$router.push("/sys/users");
+                    }).catch((error) => {
+                        Element.Message.error(error.response.data.apiError.message)
+                    });
                 } else {
                     console.log('error submit!!');
                     return false;

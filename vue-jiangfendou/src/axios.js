@@ -2,6 +2,7 @@ import axios from "axios";
 import router from "./router";
 import Element from "element-ui";
 
+// axios.defaults.baseURL = "http://8.136.17.98:8085"
 axios.defaults.baseURL = "http://localhost:8085"
 
 const request = axios.create({
@@ -24,10 +25,8 @@ request.interceptors.response.use(response => {
         console.log(response.data.httpStatus);
         var res = response.data;
         if (res.httpStatus === 'OK') {
-            // if (res.code === 200) {
             return response;
         } else {
-            console.log("11111111111");
             Element.Message.error(!res.apiError.message ? '系统异常' : res.apiError.message.message);
             return Promise.reject(res.apiError.message);
         }

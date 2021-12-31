@@ -28,13 +28,18 @@ export default {
             state.hasRoutes = hasRoutes
         },
         addTab(state, tab) {
+            console.log("tab");
+            console.log(state, tab);
             let index = state.editableTabs.findIndex(e => e.name === tab.name)
+            console.log(index);
             if (index === -1) {
+                console.log("tab11111");
                 state.editableTabs.push({
                     title: tab.title,
                     name: tab.name
                 });
             }
+            console.log(tab.name)
             state.editableTabsValue = tab.name;
         },
         resetState: (state) => {

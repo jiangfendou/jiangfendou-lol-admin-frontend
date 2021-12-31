@@ -5,8 +5,7 @@
             :key="item.name"
             :label="item.title"
             :name="item.name"
-        >
-            
+        > 
         </el-tab-pane>
     </el-tabs>
 </template>
@@ -23,6 +22,8 @@
         computed: {
             editableTabs: {
                 get() {
+                    console.log("this.$store.state.menus.editableTabs");
+                    console.log(this.$store.state.menus.editableTabs);
                     return this.$store.state.menus.editableTabs;
                 },
                 set(val) {
@@ -31,6 +32,8 @@
             },
             editableTabsValue: {
                 get() {
+                    console.log("this.$store.state.menus.editableTabsValue");
+                    console.log(this.$store.state.menus.editableTabsValue);
                     return this.$store.state.menus.editableTabsValue;
                 },
                 set(val) {

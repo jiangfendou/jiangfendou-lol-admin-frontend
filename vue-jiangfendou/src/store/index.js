@@ -5,8 +5,11 @@ import menus from "./modules/menus"
 Vue.use(Vuex)
 
 export default new Vuex.Store({
+
+
     state: {
-        token: ''
+        token: '',
+        userId: ''
     },
     mutations: {
         SET_TOKEN: (state, token) => {

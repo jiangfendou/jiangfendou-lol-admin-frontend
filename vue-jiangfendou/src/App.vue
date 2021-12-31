@@ -10,12 +10,16 @@
     watch: {
       $route(to, from) {
         if (to.path != "/login") {
-          let obj = {
-            name: to.name,
-            title: to.meta.title
+          if (to.path == "/userCenter") {
+            this.$store.commit("addTab", {name: 'userCenter', title: '个人中心'})
+          } else {
+            let obj = {
+              name: to.name,
+              title: to.meta.title
+            }
+            this.$store.commit("addTab", obj)
           }
-          this.$store.commit("addTab", obj)
-        }
+        } 
       }
     }
   }
