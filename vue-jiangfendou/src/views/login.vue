@@ -2,7 +2,7 @@
     <el-row type="flex" class="row-bg" justify="center">
         <el-col :xl="6" :lg="7">
             <h2>欢迎来到英雄联盟管理系统</h2>
-            <el-image :src="require('@/assets/lol_all.png')" style="height: 180px; width: 180px" ></el-image>
+            <el-image :src="require('@/assets/images/lol_all.png')" style="height: 180px; width: 180px" ></el-image>
             <p>公众号 LOL</p>
         </el-col>
         <el-col :span="1">
@@ -102,8 +102,8 @@
 
 <style scoped>
     .el-row {
-        background-color: #fafafa;
-        /* background-image: url('../assets/blue.png'); */
+        /* background-color: #fafafa; */
+        background-image: url('../assets/images/blue.png');
         background-repeat: no-repeat;
         background-size: 100% 100%;
         height: 100%;

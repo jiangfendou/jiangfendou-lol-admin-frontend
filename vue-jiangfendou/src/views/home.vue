@@ -18,7 +18,7 @@
                                  @click.native="selectMenu({name: 'userCenter', title: '个人中心'})">个人中心</router-link>
                             </el-dropdown-item>
                             <el-dropdown-item @click.native="logout">退出</el-dropdown-item>
-                        </el-dropdown-menu>
+                        </el-dropdown-menu> 
                     </el-dropdown>
                     <el-link href="https://lpl.qq.com/es/worlds/2021/" target="_blank">官方网站</el-link>
                     <el-link href="https://lpl.qq.com/es/worlds/2021/" target="_blank">游戏记录</el-link>
@@ -71,7 +71,6 @@
                 })
             },
             selectMenu(item) {
-                console.log("iiiiiiiiii");
                 this.$store.commit("addTab", item);
             }
         }

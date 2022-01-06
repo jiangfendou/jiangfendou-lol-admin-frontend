@@ -39,7 +39,7 @@ const router = new VueRouter({
 })
 
 router.beforeEach((to, from, next) => {
-
+    console.log(11111111111);
     if (!localStorage.getItem("userId")) {
         if (to.path !== '/login') {
             return next('/login')
