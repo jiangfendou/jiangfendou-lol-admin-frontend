@@ -387,7 +387,6 @@ export default {
     submitRoleFormHandle(formName) {
         var userId = this.roleForm.userId;
         var roleIds = this.$refs.roleTree.getCheckedKeys();
-        console.log("userId");
         console.log(userId);
         console.log(roleIds);
         this.$axios
