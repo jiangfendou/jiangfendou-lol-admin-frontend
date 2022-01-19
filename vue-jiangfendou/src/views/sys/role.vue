@@ -197,7 +197,7 @@
         },
         created() {
             this.getRoleList()
-            this.$axios.get("/sys/menu/list").then(res => {
+            this.$axios.get("/sys/menu/list?status=" + 1).then(res => {
                 this.permTreeData =res.data.data
             })
         },
