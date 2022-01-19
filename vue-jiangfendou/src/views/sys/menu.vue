@@ -85,14 +85,15 @@
             <el-form :model="editFrom" :rules="editFromRules" ref="editFrom" label-width="100px" class="demo-editFrom">
                 <el-form-item label="上级菜单" prop="parentId">
                     <el-select v-model="editFrom.parentId" placeholder="请选择上级菜单">
-                    <template v-for="item in tableData">
-                        <el-option :label="item.name" :value="item.id"></el-option>
-                        <template v-for="child in item.children">
-                            <el-option :label="child.name" :value="child.id">
-                                <span>{{"-" + child.name}}</span>
-                            </el-option>
+                        <el-option label="首级菜单" value="0"></el-option>
+                        <template v-for="item in tableData">
+                            <el-option :label="item.name" :value="item.id"></el-option>
+                            <template v-for="child in item.children">
+                                <el-option :label="child.name" :value="child.id">
+                                    <span>{{"-" + child.name}}</span>
+                                </el-option>
+                            </template>
                         </template>
-                    </template>
                     </el-select>
                 </el-form-item>
                 <el-form-item label="菜单名称" prop="name" label-width="100px">
